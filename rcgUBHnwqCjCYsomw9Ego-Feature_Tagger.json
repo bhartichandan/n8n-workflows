@@ -1,0 +1,362 @@
+{
+  "name": "Feature Tagger",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rHzjpAiwQt8vpj6uEa41mlorLrrBg16_mq9gitXvJfM",
+          "mode": "list",
+          "cachedResultName": "Notion-backlog",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rHzjpAiwQt8vpj6uEa41mlorLrrBg16_mq9gitXvJfM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1082240862,
+          "mode": "list",
+          "cachedResultName": "Feature",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rHzjpAiwQt8vpj6uEa41mlorLrrBg16_mq9gitXvJfM/edit#gid=1082240862"
+        },
+        "options": {}
+      },
+      "id": "c4445545-debf-4ec2-9188-4fc11492009c",
+      "name": "Read Backlog Items",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        336,
+        16
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter out items that already have tags\nconst items = $input.all();\nconst untaggedItems = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const item = items[i].json;\n  \n  // Skip if already tagged (assuming column E contains tags)\n  if (!item.Tags || item.Tags === '' || item.Tags === null) {\n    untaggedItems.push({\n      json: {\n        ...item,\n        rowNumber: i + 1 // Store row number for update later\n      }\n    });\n  }\n}\n\nreturn untaggedItems;"
+      },
+      "id": "1538e42c-d0cc-4d46-a57a-fee7ba472a06",
+      "name": "Filter Untagged Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "feature_taxonomy",
+              "name": "featureTaxonomy",
+              "value": "={\n  \"content_creation\": [\n    \"text-editing\", \"block-based-editing\", \"markdown-support\", \n    \"slash-commands\", \"templates\", \"duplicate-pages\",\n    \"page-nesting\", \"inline-equations\", \"code-blocks\", \"callouts\"\n  ],\n  \"databases\": [\n    \"databases\", \"table-view\", \"board-view\", \"calendar-view\",\n    \"gallery-view\", \"timeline-view\", \"list-view\", \"database-relations\",\n    \"rollups\", \"formulas\", \"database-filters\", \"database-sorting\",\n    \"database-grouping\", \"property-types\", \"database-templates\"\n  ],\n  \"collaboration\": [\n    \"real-time-collaboration\", \"comments\", \"mentions\", \n    \"page-sharing\", \"workspace-sharing\", \"permissions\",\n    \"guest-access\", \"public-pages\", \"page-history\",\n    \"restore-versions\", \"notifications\"\n  ],\n  \"organization\": [\n    \"workspace\", \"sidebar\", \"favorites\", \"search\",\n    \"quick-find\", \"backlinks\", \"breadcrumbs\", \"page-icons\",\n    \"page-covers\", \"folders\"\n  ],\n  \"media_embeds\": [\n    \"image-upload\", \"file-attachments\", \"pdf-embedding\",\n    \"video-embedding\", \"audio-embedding\", \"web-bookmarks\",\n    \"embeds\", \"miro-embed\", \"figma-embed\", \"google-drive-embed\",\n    \"unsplash-integration\"\n  ],\n  \"ai_features\": [\n    \"ai-writing-assistant\", \"ai-autofill\", \"ai-summarization\",\n    \"ai-translation\", \"ai-editing\"\n  ],\n  \"automation\": [\n    \"api-access\", \"webhooks\", \"zapier-integration\",\n    \"slack-integration\", \"google-calendar-sync\", \"github-integration\",\n    \"automation\", \"recurring-tasks\"\n  ],\n  \"project_management\": [\n    \"task-management\", \"kanban-boards\", \"roadmaps\",\n    \"sprints\", \"dependencies\", \"progress-tracking\",\n    \"milestones\", \"assignees\"\n  ],\n  \"knowledge_management\": [\n    \"wiki\", \"docs\", \"notes\", \"knowledge-base\",\n    \"sop-templates\", \"meeting-notes\", \"research-database\"\n  ],\n  \"personal_productivity\": [\n    \"daily-notes\", \"habit-tracking\", \"goal-tracking\",\n    \"personal-dashboard\", \"reading-list\", \"bookmarks\"\n  ],\n  \"mobile_desktop\": [\n    \"mobile-app\", \"desktop-app\", \"web-app\",\n    \"offline-mode\", \"mobile-widgets\", \"quick-capture\"\n  ],\n  \"customization\": [\n    \"custom-themes\", \"custom-fonts\", \"custom-icons\",\n    \"custom-covers\", \"custom-properties\", \"custom-views\"\n  ],\n  \"security_admin\": [\n    \"sso\", \"2fa\", \"audit-log\", \"data-export\",\n    \"trash-recovery\", \"workspace-analytics\", \"scim-provisioning\",\n    \"private-pages\"\n  ],\n  \"content_types\": [\n    \"tables\", \"toggles\", \"quotes\", \"dividers\",\n    \"breadcrumbs\", \"table-of-contents\", \"synced-blocks\",\n    \"buttons\", \"charts\"\n  ]\n}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1ac9337-2202-43da-9456-606ffa797ef8",
+      "name": "Set Feature Taxonomy",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        736,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1rHzjpAiwQt8vpj6uEa41mlorLrrBg16_mq9gitXvJfM",
+          "mode": "list",
+          "cachedResultName": "Notion-backlog",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rHzjpAiwQt8vpj6uEa41mlorLrrBg16_mq9gitXvJfM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1082240862,
+          "mode": "list",
+          "cachedResultName": "Feature",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rHzjpAiwQt8vpj6uEa41mlorLrrBg16_mq9gitXvJfM/edit#gid=1082240862"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Tags": "={{ $json.output[0].content[0].text }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "d95d1839-4331-4c31-b7eb-d5eb7202c9df",
+      "name": "Update Sheet with Tags",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1584,
+        16
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "summary",
+              "name": "summary",
+              "value": "=Processed {{ $itemIndex + 1 }} items",
+              "type": "string"
+            },
+            {
+              "id": "total_tagged",
+              "name": "totalTagged",
+              "value": "={{ $input.all().length }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1794c1a7-a2a4-44f0-b8c4-c3e0d7c76078",
+      "name": "Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        1904,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40a543d3-248f-4e4f-8467-733895caf757",
+              "name": "output[0].content[0].text",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "18769647-ad0f-446b-9424-d955a67754cf",
+              "name": "ID",
+              "value": "={{ $('Filter Untagged Items').item.json.ID }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1296,
+        16
+      ],
+      "id": "c14a9c25-a3f6-4ef0-82da-c8480eac4e15",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1ac50319-48f3-40f5-8864-078b7d270582",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=\"You are a feature tagging system for product management. Given a backlog item, analyze it and return ONLY relevant feature tags from the provided taxonomy.\\n\\nBacklog Item:\\nTitle: {{ $('Filter Untagged Items').item.json.Title }}\\nDescription:{{ $('Filter Untagged Items').item.json.Description }} \\n\\nFeature Taxonomy:\\n{{ JSON.stringify($('Set Feature Taxonomy').item.json.featureTaxonomy, null, 2) }}\\n\\nInstructions:\\n1. Analyze the backlog item carefully\\n2. Select 1-5 most relevant feature tags from the taxonomy\\n3. Return ONLY a JSON array of tag strings, nothing else\\n4. Tags should be exact matches from the taxonomy\\n5. If unsure, select the closest matching tags\\n\\nExample output format:\\n[\\\"databases\\\", \\\"table-view\\\", \\\"formulas\\\"]\\n\\nNow analyze the backlog item and return only the JSON array of tags:\"\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        944,
+        16
+      ],
+      "id": "30378ec0-ee25-4302-ba9e-ba519be9bb12",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "GgexMoFkmyDyrtwU",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Read Backlog Items": {
+      "main": [
+        [
+          {
+            "node": "Filter Untagged Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Untagged Items": {
+      "main": [
+        [
+          {
+            "node": "Set Feature Taxonomy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Feature Taxonomy": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet with Tags": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet with Tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read Backlog Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

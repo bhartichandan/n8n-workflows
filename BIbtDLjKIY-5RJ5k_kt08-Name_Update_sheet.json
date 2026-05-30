@@ -1,0 +1,205 @@
+{
+  "name": "Name Update sheet",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        64
+      ],
+      "id": "3436f582-c50b-4daa-ae76-ca9b25d9dbe6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e2cd4f34-5a2d-4001-ad05-5234d43a3c01",
+              "name": "Full Name",
+              "value": "={{ $json.First_name }} {{ $json.First_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        64
+      ],
+      "id": "6062dc91-c37b-4bd3-8d24-303e170d35bc",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U",
+          "mode": "list",
+          "cachedResultName": "n8n-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Full_name": "={{ $json['Full Name'] }}",
+            "First_name": "={{ $('Get row(s) in sheet').item.json.First_name }}"
+          },
+          "matchingColumns": [
+            "First_name"
+          ],
+          "schema": [
+            {
+              "id": "First_name",
+              "displayName": "First_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last_name",
+              "displayName": "Last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full_name",
+              "displayName": "Full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        64
+      ],
+      "id": "3b5d4fd4-641e-41d9-a0f0-1c45aded0661",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U",
+          "mode": "list",
+          "cachedResultName": "n8n-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        32,
+        64
+      ],
+      "id": "9e223a22-8139-4bce-b30e-31839d3f2977",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "name": "MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "f72b7c0f-9cfd-4e15-ae26-20605e993190"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8c29403e-0b44-4ffe-b3d8-3577fac393b8",
+      "name": "MCP Server Trigger",
+      "webhookId": "f72b7c0f-9cfd-4e15-ae26-20605e993190",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ahENwiRDPIpCXzJF",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Vzkj4DBxztT_zivNkU0_s7LXON4Rp7swHUY0zPnc41M",
+          "mode": "list",
+          "cachedResultName": "Customer_Support",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Vzkj4DBxztT_zivNkU0_s7LXON4Rp7swHUY0zPnc41M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 291408400,
+          "mode": "list",
+          "cachedResultName": "Ticket Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Vzkj4DBxztT_zivNkU0_s7LXON4Rp7swHUY0zPnc41M/edit#gid=291408400"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Assigned To": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Assigned_To', ``, 'string') }}",
+            "Sentiment": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sentiment', ``, 'string') }}",
+            "Priority": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Priority', ``, 'string') }}",
+            "Issue Type": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_Type', ``, 'string') }}",
+            "Customer Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name', ``, 'string') }}",
+            "Customer ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_ID', ``, 'string') }}",
+            "Ticket ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Ticket_ID', ``, 'string') }}",
+            "Timestamp": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Timestamp', ``, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}",
+            "AI Draft Response": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('AI_Draft_Response', ``, 'string') }}",
+            "Notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ticket ID",
+              "displayName": "Ticket ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Issue Type",
+              "displayName": "Issue Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assigned To",
+              "displayName": "Assigned To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Draft Response",
+              "displayName": "AI Draft Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -256,
+        224
+      ],
+      "id": "eac8cc8e-46f1-40b9-86fe-086e699dd28c",
+      "name": "Create new ticket",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0P3Txxj6ERwHFdB1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U0A5P7KJMPW",
+          "mode": "list",
+          "cachedResultName": "imc.bharti"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_Text', ``, 'string') }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.4,
+      "position": [
+        352,
+        160
+      ],
+      "id": "277aa5a5-e069-4a0d-9cfe-aa212c54af36",
+      "name": "Send a message in Slack",
+      "webhookId": "c82b7050-e042-45cf-8783-a77660dc54f4",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "xhdvXietsvLHgb8i",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Vzkj4DBxztT_zivNkU0_s7LXON4Rp7swHUY0zPnc41M",
+          "mode": "list",
+          "cachedResultName": "Customer_Support",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Vzkj4DBxztT_zivNkU0_s7LXON4Rp7swHUY0zPnc41M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 47379974,
+          "mode": "list",
+          "cachedResultName": "Knowledge Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Vzkj4DBxztT_zivNkU0_s7LXON4Rp7swHUY0zPnc41M/edit#gid=47379974"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Issue Category",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        240
+      ],
+      "id": "491f659a-0e26-472e-ab13-131fe8ca89c9",
+      "name": "Search knowledge base",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U",
+          "mode": "list",
+          "cachedResultName": "n8n-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 141268807,
+          "mode": "list",
+          "cachedResultName": "Competitor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit#gid=141268807"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        272
+      ],
+      "id": "8ba0f821-0b85-4c92-ac30-a06780804866",
+      "name": "Get competitors",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Create new ticket": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Slack": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search knowledge base": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get competitors": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6bd9b967-7ccf-4bf9-90fa-a5bede433b1c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "path": "edf5de33-4378-4c97-a258-bd56c76f0d61",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4b8eca85-215e-40e7-a7fa-cad745cf3015",
+      "name": "Webhook",
+      "webhookId": "edf5de33-4378-4c97-a258-bd56c76f0d61"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        400,
+        256
+      ],
+      "id": "a9a45cca-2e09-4c14-b2e5-8ee30a4e6ddc",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

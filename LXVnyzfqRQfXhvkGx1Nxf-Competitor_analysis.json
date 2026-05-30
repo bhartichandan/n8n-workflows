@@ -1,0 +1,1486 @@
+{
+  "name": "Competitor analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U",
+          "mode": "list",
+          "cachedResultName": "n8n-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 141268807,
+          "mode": "list",
+          "cachedResultName": "Competitor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit#gid=141268807"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        320
+      ],
+      "id": "d6d63515-e538-4b93-a61a-f55d9a76cd3e",
+      "name": "Get competitors",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0P3Txxj6ERwHFdB1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "chandan@chandanbharti.com",
+        "subject": "Competitor updates",
+        "message": "={{ $json.data }}",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        544
+      ],
+      "id": "6ee0f483-550e-4294-8461-2803a710649e",
+      "name": "Send a message",
+      "webhookId": "4f56550a-f4c6-498b-9c88-89fafb5f277b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QyvCH6uqv2rMmkSR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.choices[0].message.content }}",
+        "destinationKey": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        608,
+        544
+      ],
+      "id": "112584bf-d8eb-449d-9ddd-087e76c2bc79",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a **Perplexity results formatter**. Your task is to create a clean, uniform competitor monitoring report based on the provided Perplexity output.\n\n## Strict Output Contract\n- Output **markdown only** (no code fences, no extra commentary).\n- Start with: `## Competitor Monitoring Report (Last 30 Days)`\n- For each competitor:\n  - Use a heading: `### <Competitor Name>` (plain name, **no URL** in the heading)\n  - Then list **key findings** as bullet points (`- ...`)\n  - Insert **one blank line** between competitors.\n- If there are **no updates** for a competitor, output exactly:\n  - `### <Competitor Name>`\n  - `No updates`\n  - **Do not include any other text or links.**\n\n## Reference & Link Rules\n- Replace any Perplexity-style numeric references like `[1]`, `[2]` found inside the content with **inline markdown links** to the actual URLs.\n- If the input provides a `citations` array alongside `content`, treat it as a **1-based index** (i.e., `[1]` maps to `citations[0]`).\n- Remove duplicate links and remove any trailing \"Links:\" / \"### Links\" / footer link sections if present.\n- If a referenced index has **no matching URL**, omit that specific link text and keep the sentence readable.\n- If the same URL appears multiple times within a competitor section, keep only the **first occurrence**.\n\n## Content Guidance\n- Keep bullet points concise, factual, and focused on **new products, features, pricing, partnerships, incidents, or credible third‑party analyses** within the **last 30 days**.\n- If the section explicitly states there are **no updates**, follow the “No updates” rule above.\n- Avoid speculative language. If timing is unclear, prefer omitting rather than guessing.\n- Normalize phrasing (e.g., “Launched…”, “Introduced…”, “Announced…”, “No incidents reported…”).\n\n## Example (format only)\n<example>\n## Competitor Monitoring Report (Last 30 Days)\n\n### Accredible\nNo updates\n\n### Certifier\n- Launched a new AI certificate generator with instant PDF export (source)[https://certifier.io/blog/best-ai-certificate-makers]\n- Introduced dynamic attributes and certificate preview features (source)[https://certifier.io/blog/whats-new-at-certifier]\n</example>\n\n## Data\nBelow is the raw Perplexity answer. Use it as your only source of truth and **do not** include this JSON in the output.\n\n{{ $json.toJsonString() }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        224,
+        544
+      ],
+      "id": "c195d555-962c-4c3b-ad42-a4089ba25e2b",
+      "name": "Prepare a report (Message a model)",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "GgexMoFkmyDyrtwU",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        800,
+        320
+      ],
+      "id": "0dc91ff6-19f6-437d-bbf2-c929288efb13",
+      "name": "Aggregate responses"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return ({\n  content: $json.choices[0].message.content,\n  citations: $json.citations\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        320
+      ],
+      "id": "4fe250df-d34d-41a0-b3bb-c422c20e3aa2",
+      "name": "Compress the response"
+    },
+    {
+      "parameters": {
+        "content": "### 2. Use Perplexity API\nFor most use cases, it's much easier than using browser APIs",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        416,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "a2bcf5dd-696d-4f92-9d84-27c47729e7cd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### 3. Filter each response\nTake only citations & content to compress the context ",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "8251fe49-2896-428e-889e-40be396fc760",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### 4. Aggregate into a string\nCombine all responses into a single variable for an LLM",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "0d2ef01d-58ae-4c54-a6db-76027946c342",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### 1. Read competitors\nStored in a Google Sheet",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "cc2ba209-afd5-4737-a213-6857bc295da2",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### 5. Create a final report\nUses markdown formatting to save tokens and reduce complexity.",
+        "height": 144,
+        "width": 230,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "f18d4411-9901-4e38-96f0-dafec754d3e1",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### 6. Convert to HTML snippet\nThis is a deterministtic. We don't need to rely on an LLM.",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "c667ec2b-9b6a-4b08-92b2-8dabfd88c9bb",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### 7. Send the report\nUses HTML formatting.",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "b2ab50a7-2114-4626-a351-7f5a7aa7ffc0",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        1456
+      ],
+      "id": "1e0be5a9-2eda-47bc-8115-e9f8c042bfad",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a market researcher. \n\n<goal>\nYour goal is to:\nFind important competitor insights published within the last 30 days.\nFocus specifically on:\n- New products, capabilities, or features\n- Important updates, announcements, or changes (pricing, partnerships, integrations)\n- Any official or credible third‑party analysis\n- User complaints (e.g., Reddit)\n<goal>\n\n<reasoning_steps>\n\nStep 1: Read competitors stored in a Google Sheet (tool use)\nStep 2: For each competitor, use Perplexity to find relevant information (tool use)\nStep 3: From the responses, take only citations & content to compress the context\nStep 4: Create a final report\n- Use markdown formatting to save tokens and reduce complexity\n- Follow the other assumptions about the format defined later\n\n</reasoning_steps>\n\n<report formatting>\n\n## Strict Output Contract\n- Output **markdown only** (no code fences, no extra commentary).\n- Start with: `## Competitor Monitoring Report (Last 30 Days)`\n- For each competitor:\n  - Use a heading: `### <Competitor Name>` (plain name, **no URL** in the heading)\n  - Then list **key findings** as bullet points (`- ...`)\n  - Insert **one blank line** between competitors.\n- If there are **no updates** for a competitor, output exactly:\n  - `### <Competitor Name>`\n  - `No updates`\n  - **Do not include any other text or links.**\n\n## Reference & Link Rules\n- Replace any Perplexity-style numeric references like `[1]`, `[2]` found inside the content with **inline markdown links** to the actual URLs.\n- If the input provides a `citations` array alongside `content`, treat it as a **1-based index** (i.e., `[1]` maps to `citations[0]`).\n- Remove duplicate links and remove any trailing \"Links:\" / \"### Links\" / footer link sections if present.\n- If a referenced index has **no matching URL**, omit that specific link text and keep the sentence readable.\n- If the same URL appears multiple times within a competitor section, keep only the **first occurrence**.\n\n## Content Guidance\n- Keep bullet points concise, factual, and focused on **new products, features, pricing, partnerships, incidents, or credible third‑party analyses** within the **last 30 days**.\n- If the section explicitly states there are **no updates**, follow the “No updates” rule above.\n- Avoid speculative language. If timing is unclear, prefer omitting rather than guessing.\n- Normalize phrasing (e.g., “Launched…”, “Introduced…”, “Announced…”, “No incidents reported…”).\n\n## Example (format only)\n<example>\n## Competitor Monitoring Report (Last 30 Days)\n\n### Accredible\nNo updates\n\n### Certifier\n- Launched a new AI certificate generator with instant PDF export (source)[https://certifier.io/blog/best-ai-certificate-makers]\n- Introduced dynamic attributes and certificate preview features (source)[https://certifier.io/blog/whats-new-at-certifier]\n</example>\n\n</report formatting>\n\n",
+        "options": {
+          "maxIterations": 30,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        1232
+      ],
+      "id": "b4d9ec5f-f58a-48b9-8124-c032aac6e5c5",
+      "name": "Research Agent",
+      "retryOnFail": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        576,
+        1232
+      ],
+      "id": "af3a23c8-c42d-4ea1-b9c7-6633abc48ea5",
+      "name": "Markdown1"
+    },
+    {
+      "parameters": {
+        "sendTo": "imc.bharti@gmail.com",
+        "subject": "Competitor updates",
+        "message": "={{ $json.data }}",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        752,
+        1232
+      ],
+      "id": "b8dd4fc1-00e8-4ded-beae-caff02cd3f67",
+      "name": "Send a message1",
+      "webhookId": "01598286-8e58-47c9-bb0c-df868d8b9a9e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lMyXSxhSE5KZoBCj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U",
+          "mode": "list",
+          "cachedResultName": "n8n-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 141268807,
+          "mode": "list",
+          "cachedResultName": "Competitor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit#gid=141268807"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        1456
+      ],
+      "id": "f3124523-f86a-4317-8a9d-ded404252c61",
+      "name": "Get competitors1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "=I’m conducting market research. \n\nFind important competitor insights about {{ $json.Name }} published within the last 30 days.\n\nFocus specifically on:\n- New products, capabilities, or features\n- Important updates, announcements, or changes (pricing, partnerships, integrations)\n- Any official or credible third‑party analysis\n- User compaints (e.g., Reddit)\n\nProvide links directly in the text, dates, and brief summaries. \n\nIMPORTANT: If there are no importnat updates, after the competitor name ALWAYS reply with \"No updates\" and do not include anything else.\n\n## Formatting\n- Start with '##' including ONLY a competitor name\n- Include relavant links directly at the bottom of the content, without relying on citations or skip them if no relevanc citations were found"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        416,
+        320
+      ],
+      "id": "f31fac41-f87f-4204-9bbd-a277228008ac",
+      "name": "Message Perplexity",
+      "retryOnFail": true,
+      "credentials": {
+        "perplexityApi": {
+          "id": "kTqcAYqGxxNZgFrz",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        480,
+        1456
+      ],
+      "id": "e66f5be2-debd-4e42-97de-5e3450dca699",
+      "name": "Message Perplexity1",
+      "credentials": {
+        "perplexityApi": {
+          "id": "kTqcAYqGxxNZgFrz",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "reasoningEffort": "low"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        2752
+      ],
+      "id": "8e1e7096-ef35-4c64-862f-de83f044eca2",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "GgexMoFkmyDyrtwU",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        2752
+      ],
+      "id": "00ac9f85-0d3f-46a4-8ee6-29d7d8c0b21b",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a market researcher. \n\n<goal>\nYour goal is to:\nFind important competitor insights published within the last 30 days.\nFocus specifically on:\n- New products, capabilities, or features\n- Important updates, announcements, or changes (pricing, partnerships, integrations)\n- Any official or credible third‑party analysis\n- User complaints (e.g., Reddit)\n<goal>\n\n<reasoning_steps>\n\nStep 1: Read competitors stored in a Google Sheet (tool use)\nStep 2: For each competitor, use Perplexity to find relevant information (tool use)\nStep 3: From the responses, take only citations & content to compress the context\nStep 4: Create a final report\n- Use markdown formatting to save tokens and reduce complexity\n- Follow the other assumptions about the format defined later\nStep 5: Convert the report to HTML snippet (not full HTML) and send as email/Gmail body (tool use)\n\nIMPORTANT:\n\nAfter each step, pause to reflect on progress and update your internal context before moving to the next one.\nUse the think tool as a persistent scratchpad to record:\n- Key findings or partial outputs from each step\n- Competitors already processed\n- Any missing or ambiguous information that may require a retry\n\nBefore proceeding, always check whether the current output:\n- Fulfills the goal (all competitors analyzed, insights verified, citations included)\n- Matches the strict output contract (markdown-only, correct format, no code fences)\n\nIf not, loop back and repeat earlier steps as needed.\nBe persistent, self-correcting, and outcome-driven - continue refining until the goal is fully achieved.\n\n</reasoning_steps>\n\n<report_formatting>\n\n## Strict Output Contract\n- Output **markdown only** (no code fences, no extra commentary).\n- Start with: `## Competitor Monitoring Report (Last 30 Days)`\n- For each competitor:\n  - Use a heading: `### <Competitor Name>` (plain name, **no URL** in the heading)\n  - Then list **key findings** as bullet points (`- ...`)\n  - Insert **one blank line** between competitors.\n- If there are **no updates** for a competitor, output exactly:\n  - `### <Competitor Name>`\n  - `No updates`\n  - **Do not include any other text or links.**\n\n## Reference & Link Rules\n- Replace any Perplexity-style numeric references like `[1]`, `[2]` found inside the content with **inline markdown links** to the actual URLs.\n- If the input provides a `citations` array alongside `content`, treat it as a **1-based index** (i.e., `[1]` maps to `citations[0]`).\n- Remove duplicate links and remove any trailing \"Links:\" / \"### Links\" / footer link sections if present.\n- If a referenced index has **no matching URL**, omit that specific link text and keep the sentence readable.\n- If the same URL appears multiple times within a competitor section, keep only the **first occurrence**.\n\n## Content Guidance\n- Keep bullet points concise, factual, and focused on **new products, features, pricing, partnerships, incidents, or credible third‑party analyses** within the **last 30 days**.\n- If the section explicitly states there are **no updates**, follow the “No updates” rule above.\n- Avoid speculative language. If timing is unclear, prefer omitting rather than guessing.\n- Normalize phrasing (e.g., “Launched…”, “Introduced…”, “Announced…”, “No incidents reported…”).\n\n## Example (format only)\n<example>\n## Competitor Monitoring Report (Last 30 Days)\n\n### Accredible\nNo updates\n\n### Certifier\n- Launched a new AI certificate generator with instant PDF export (source)[https://certifier.io/blog/best-ai-certificate-makers]\n- Introduced dynamic attributes and certificate preview features (source)[https://certifier.io/blog/whats-new-at-certifier]\n</example>\n\n</report_formatting>\n\n",
+        "options": {
+          "maxIterations": 30,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        2512
+      ],
+      "id": "9d045e3a-c0ef-44cc-abe8-076cfc496de0",
+      "name": "Research Agent1",
+      "retryOnFail": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1tIGiw7g_7FuQNFHvXQ9xZpumtVq1SdW1wO7RbG4arfU",
+          "mode": "list",
+          "cachedResultName": "Accredia Competitors",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tIGiw7g_7FuQNFHvXQ9xZpumtVq1SdW1wO7RbG4arfU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tIGiw7g_7FuQNFHvXQ9xZpumtVq1SdW1wO7RbG4arfU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        2752
+      ],
+      "id": "799041d9-1ab8-49ad-9137-8ca2c5dc9992",
+      "name": "Get competitors2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        480,
+        2752
+      ],
+      "id": "532e1887-6e1b-4cb8-b86a-541883558d32",
+      "name": "Message Perplexity2",
+      "credentials": {
+        "perplexityApi": {
+          "id": "kTqcAYqGxxNZgFrz",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "pawel@productcompass.pm",
+        "subject": "Competitor summary autonomous",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        2752
+      ],
+      "id": "00ac9da0-294c-480a-b5a1-498610b2445a",
+      "name": "Send a message in Gmail",
+      "webhookId": "28227f8c-dfbe-487a-9ea8-ac3b0d3d624c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lMyXSxhSE5KZoBCj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        2080
+      ],
+      "id": "04a2f05f-5ff2-40ec-8b29-ed6aceb48199",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "GgexMoFkmyDyrtwU",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        2080
+      ],
+      "id": "69b7ab6c-cd83-4310-9717-af518e2f3014",
+      "name": "Think2"
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=You are a market researcher. \n\n<goal>\nYour goal is to:\nFind important competitor insights published within the last 30 days.\nFocus specifically on:\n- New products, capabilities, or features\n- Important updates, announcements, or changes (pricing, partnerships, integrations)\n- Any official or credible third‑party analysis\n- User complaints (e.g., Reddit)\n<goal>\n\nYou can find my competitors using the spreadsheet / sheets tool.\n\nUse the available tools to send me a well-structured, scannable Gmail summary (HTML) while avoiding unnecessary details with inline links to relevant sources and without links in the footer.\n\nIMPORTANT: If there are no news, just list the competitor and say \"No updates\".\n",
+        "options": {
+          "maxIterations": 30,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        1856
+      ],
+      "id": "fc8850e2-50a7-4c40-b1ac-d2654d8da192",
+      "name": "Research Agent2",
+      "retryOnFail": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        448,
+        2080
+      ],
+      "id": "5e1db520-eb0b-46c2-b024-fe4ce9c532d7",
+      "name": "Message Perplexity3",
+      "credentials": {
+        "perplexityApi": {
+          "id": "kTqcAYqGxxNZgFrz",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "chandan@chandanbharti.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        2080
+      ],
+      "id": "f5cf35d7-1e19-4bfa-bed8-5e3631b4510a",
+      "name": "Send a message in Gmail1",
+      "webhookId": "b4fa0154-9aae-4298-b047-4abcce40eb54",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lMyXSxhSE5KZoBCj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# A. LLM Workflow\nThe entire logic fully orchestrated by n8n\nAutonomy: None",
+        "height": 112,
+        "width": 950,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "81105866-7f0a-4393-ae43-537dfd3ccf76",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# B. Agentic Workflow\nThe entire logic fully orchestrated via workflow and detailed steps in the agent prompt\nAutonomy: Low",
+        "height": 112,
+        "width": 950,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        912
+      ],
+      "typeVersion": 1,
+      "id": "0c6e1408-a46d-47f3-844f-bb8e9be435da",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "**1.2. Use Perplexity API**\nFind recent news about each competitor",
+        "height": 80,
+        "width": 294,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        464,
+        1600
+      ],
+      "typeVersion": 1,
+      "id": "c006ec6b-b803-46b3-9b1e-0b257f8eea45",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "**1.1. Read competitors**\nStored in a Google Sheet",
+        "height": 80,
+        "width": 198,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        1600
+      ],
+      "typeVersion": 1,
+      "id": "8546e43b-70ff-4fc5-8f7c-6b336a0c175c",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "### 2. Convert to HTML snippet\nThis is a deterministtic. We don't need to rely on an LLM.",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        576,
+        1056
+      ],
+      "typeVersion": 1,
+      "id": "328b5a91-3a20-4b4f-831a-fd793c259600",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "### 3. Send the report\nUses HTML formatting.",
+        "height": 144,
+        "width": 150,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        752,
+        1056
+      ],
+      "typeVersion": 1,
+      "id": "b19dea4f-b840-4d02-b5a3-82466baacce1",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "### 1. Find recent news about competitors and create a report\nDetailed steps and tool use in the agent prompt",
+        "height": 144,
+        "width": 230,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        1056
+      ],
+      "typeVersion": 1,
+      "id": "d651ffca-14b5-4866-81d9-7e7711e50e04",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "# C. AI Agent\nAll actions performed by the agent. The prompt doesn't contain specific steps, only the objective\nAutonomy: High",
+        "height": 112,
+        "width": 950,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        1712
+      ],
+      "typeVersion": 1,
+      "id": "99e366fe-3acf-4a09-a0f5-90828b681419",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "## D. AI Agent\nAll actions performed by the agent. The prompt specifies detailed steps and the objective\nAutonomy: Medium",
+        "height": 112,
+        "width": 950,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        2368
+      ],
+      "typeVersion": 1,
+      "id": "416e59e2-af79-43cb-b56f-4a82770151ca",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "content": "## GPT-5, low effort\nTask success: **100%** (185/185)\nAvg. total tokens: **4 543**\nAvg. time: **41s**\nAvg. prompt tokens: 3 255\nAvg. completion tokens: 1 288",
+        "height": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        208
+      ],
+      "typeVersion": 1,
+      "id": "50ce91ee-ce66-4e42-aa9b-e392a627f1f4",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "content": "## GPT-5, low reason.\nTask success: **100%** (185/185)\nAvg. total tokens: **15,605**\nAvg. time: **1m 09s**\nAvg. prompt tokens: 11,427\nAvg. completion tokens: 4,178\n### Better compression, fewer tool-call wrappers",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        1168
+      ],
+      "typeVersion": 1,
+      "id": "7c5c6738-d274-4ded-a99a-45e0944d0bb8",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "content": "## GPT-5, low reason.\nTask success: **100%** (185/185)\nAvg. total tokens: **30,204**\nAvg. time: **1m 9s**\nAvg. prompt tokens: 27,026\nAvg. completion tokens: 3,178\n### Better compression, fewer tool-call wrappers",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        1968
+      ],
+      "typeVersion": 1,
+      "id": "e89bab94-4c76-4c9d-9f8c-e10a77a74efc",
+      "name": "Sticky Note18"
+    },
+    {
+      "parameters": {
+        "content": "## GTP-4o\nTask success: **100%** (185/185)\nAvg. total tokens: **34,860**\nAvg. time: **53s**\nAvg. prompt tokens: 33,795\nAvg. completion tokens: 1,065\n### Verbose encoding, larger JSON + metadata ",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        1712
+      ],
+      "typeVersion": 1,
+      "id": "46a9cebd-a3b9-41cc-93e9-ea3d479986de",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "content": "## GPT-4o\nTask success: **100%** (185/185)\nAvg. total tokens: **19,310**\nAvg. time: **42s**\nAvg. prompt tokens: 18,318\nAvg. completion tokens: 992\n### Verbose encoding, larger JSON + metadata ",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        912
+      ],
+      "typeVersion": 1,
+      "id": "7b05097c-e50d-4be3-aa8c-aba8c2d485ee",
+      "name": "Sticky Note20"
+    },
+    {
+      "parameters": {
+        "content": "## GPT-4o\nTask success: **98.4%** (182/185)\nAvg. total tokens: **2 705**\nAvg. time: **25s**\nAvg. prompt tokens: 2 557\nAvg. completion tokens: 148",
+        "height": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "1d19a3d2-9fd8-4fbe-b1b9-51e2588e14bc",
+      "name": "Sticky Note21"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3472,
+        1040
+      ],
+      "id": "eefa186d-e00d-4cf5-8383-6a4bd4fc4cb9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        3360
+      ],
+      "id": "3b3ac381-6855-40dd-8e50-4a79dce25517",
+      "name": "Think3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a market researcher. \n\n<goal>\nYour goal is to:\nFind important competitor insights published within the last 30 days.\nFocus specifically on:\n- New products, capabilities, or features\n- Important updates, announcements, or changes (pricing, partnerships, integrations)\n- Any official or credible third‑party analysis\n- User complaints (e.g., Reddit)\n<goal>\n\n<reasoning_steps>\n\nStep 1: Read competitors stored in a Google Sheet (MCP tool use)\nStep 2: For each competitor, use Perplexity to find relevant information (tool use)\nStep 3: From the responses, take only citations & content to compress the context\nStep 4: Create a final report\n- Use markdown formatting to save tokens and reduce complexity\n- Follow the other assumptions about the format defined later\n\n</reasoning_steps>\n\n<report formatting>\n\n## Strict Output Contract\n- Output **markdown only** (no code fences, no extra commentary).\n- Start with: `## Competitor Monitoring Report (Last 30 Days)`\n- For each competitor:\n  - Use a heading: `### <Competitor Name>` (plain name, **no URL** in the heading)\n  - Then list **key findings** as bullet points (`- ...`)\n  - Insert **one blank line** between competitors.\n- If there are **no updates** for a competitor, output exactly:\n  - `### <Competitor Name>`\n  - `No updates`\n  - **Do not include any other text or links.**\n\n## Reference & Link Rules\n- Replace any Perplexity-style numeric references like `[1]`, `[2]` found inside the content with **inline markdown links** to the actual URLs.\n- If the input provides a `citations` array alongside `content`, treat it as a **1-based index** (i.e., `[1]` maps to `citations[0]`).\n- Remove duplicate links and remove any trailing \"Links:\" / \"### Links\" / footer link sections if present.\n- If a referenced index has **no matching URL**, omit that specific link text and keep the sentence readable.\n- If the same URL appears multiple times within a competitor section, keep only the **first occurrence**.\n\n## Content Guidance\n- Keep bullet points concise, factual, and focused on **new products, features, pricing, partnerships, incidents, or credible third‑party analyses** within the **last 30 days**.\n- If the section explicitly states there are **no updates**, follow the “No updates” rule above.\n- Avoid speculative language. If timing is unclear, prefer omitting rather than guessing.\n- Normalize phrasing (e.g., “Launched…”, “Introduced…”, “Announced…”, “No incidents reported…”).\n\n## Example (format only)\n<example>\n## Competitor Monitoring Report (Last 30 Days)\n\n### Accredible\nNo updates\n\n### Certifier\n- Launched a new AI certificate generator with instant PDF export (source)[https://certifier.io/blog/best-ai-certificate-makers]\n- Introduced dynamic attributes and certificate preview features (source)[https://certifier.io/blog/whats-new-at-certifier]\n</example>\n\n</report formatting>\n\n",
+        "options": {
+          "maxIterations": 30,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        3136
+      ],
+      "id": "6341c71c-1592-4ce9-9ce5-3405849a1375",
+      "name": "Research Agent3",
+      "retryOnFail": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        688,
+        3136
+      ],
+      "id": "88b8fe9f-0fea-4a22-9dfa-4f6d740bb8e7",
+      "name": "Markdown2"
+    },
+    {
+      "parameters": {
+        "sendTo": "imc.bharti@gmail.com",
+        "subject": "Competitor updates",
+        "message": "={{ $json.data }}",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        864,
+        3136
+      ],
+      "id": "d278b162-4a5b-46c9-abd9-e40fd8401702",
+      "name": "Send a message2",
+      "webhookId": "01598286-8e58-47c9-bb0c-df868d8b9a9e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lMyXSxhSE5KZoBCj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        592,
+        3360
+      ],
+      "id": "d69390e6-3501-45ef-b411-2259b9afb563",
+      "name": "Message Perplexity4",
+      "credentials": {
+        "perplexityApi": {
+          "id": "kTqcAYqGxxNZgFrz",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "**1.2. Use Perplexity API**\nFind recent news about each competitor",
+        "height": 80,
+        "width": 294,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        576,
+        3504
+      ],
+      "typeVersion": 1,
+      "id": "c938bf39-8ffd-434a-982f-6bfad7b3c6a6",
+      "name": "Sticky Note22"
+    },
+    {
+      "parameters": {
+        "content": "**1.1. Read competitors**\nStored in a Google Sheet using MCP",
+        "height": 80,
+        "width": 198,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        336,
+        3504
+      ],
+      "typeVersion": 1,
+      "id": "ea2a50cc-3c37-45ae-8592-e5164a27c502",
+      "name": "Sticky Note23"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://vartura.app.n8n.cloud/mcp/f72b7c0f-9cfd-4e15-ae26-20605e993190",
+        "authentication": "bearerAuth",
+        "include": "selected",
+        "includeTools": [
+          "Get_competitors"
+        ],
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        3376
+      ],
+      "id": "fff57e61-2aff-45d9-a734-ca441c745da3",
+      "name": "MCP Client",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ahENwiRDPIpCXzJF",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        192,
+        3312
+      ],
+      "id": "d3db8cbc-5823-4888-8ee3-b7a68def12cf",
+      "name": "OpenaI/gpt4.1 mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Xw0GIVrn2U08bFXz",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## D. AI Agent\n Actions performed by the agent. Use of MCP client instead of direct tool integration\nAutonomy: Medium",
+        "height": 112,
+        "width": 950,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        2960
+      ],
+      "typeVersion": 1,
+      "id": "78fde8d0-5846-406e-abdc-5389c5965b53",
+      "name": "Sticky Note24"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4.1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        96,
+        1440
+      ],
+      "id": "d2a9c636-6142-46cb-b105-2cbe25269efc",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Xw0GIVrn2U08bFXz",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U",
+          "mode": "list",
+          "cachedResultName": "n8n-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 141268807,
+          "mode": "list",
+          "cachedResultName": "Competitor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftrdB3CROBOoR8TKEAMMPv5THRRaVGGtIlIw9fvYb_U/edit#gid=141268807"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        2128
+      ],
+      "id": "611ffcfc-ee80-4a91-99f6-518d47976ef3",
+      "name": "Get competitors3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ELiZWPdpw3iAtmg",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        3184
+      ],
+      "id": "1e2cac23-1638-4f59-ac00-d4266700dabd",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "Get competitors": {
+      "main": [
+        [
+          {
+            "node": "Message Perplexity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare a report (Message a model)": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate responses": {
+      "main": [
+        [
+          {
+            "node": "Prepare a report (Message a model)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compress the response": {
+      "main": [
+        [
+          {
+            "node": "Aggregate responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get competitors1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Perplexity": {
+      "main": [
+        [
+          {
+            "node": "Compress the response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Perplexity1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get competitors2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Perplexity2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Perplexity3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent3": {
+      "main": [
+        [
+          {
+            "node": "Markdown2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown2": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Perplexity4": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenaI/gpt4.1 mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get competitors3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Research Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

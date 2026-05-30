@@ -1,0 +1,154 @@
+{
+  "name": "Linkedin-form",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Generate Content",
+        "formDescription": "A LinkedIn Article Will be created based on your input",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic to generate LinkedIn rticle",
+              "fieldType": "textarea",
+              "placeholder": "Typel your topic in short",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -112,
+        48
+      ],
+      "id": "1df9b26a-56a7-4241-a5c3-d6a36caa8475",
+      "name": "On form submission",
+      "webhookId": "3fac679d-d9e9-4883-ae00-65f2f2a34201"
+    },
+    {
+      "parameters": {
+        "sendTo": "chandan@chandanbharti.com",
+        "subject": "Your Linkedin Content for today",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        64
+      ],
+      "id": "1e78281c-fdc8-450d-977f-44c3d7abb5f8",
+      "name": "Send a message",
+      "webhookId": "7cf35036-29c0-47e4-859d-f6799bccd327",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lMyXSxhSE5KZoBCj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        304,
+        320
+      ],
+      "id": "ccc0efd2-ffa3-42f3-af59-bb4deeb52c11",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7LkYvEyTXzGne6A6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Act as a highly experienced LinkedIn content strategist and social media engagement expert with a proven understanding of how viral posts are written, structured, and emotionally paced.\nWrite a high-impact LinkedIn post designed to maximize reach and engagement. The post must open with a strong hook in the first 1 to 3 lines that immediately captures attention by highlighting a relatable professional or personal problem. From there, organically build emotional and logical context, allowing the narrative to flow naturally without sounding scripted or overly polished.\nStructure the post in multiple short paragraphs, each no longer than 1 to 2 sentences. The progression should feel conversational and intuitive, not formulaic. Deliver clear, practical value or insight, then close with a compelling, conversation-driven call to action that invites readers to comment, reflect, or share their own experiences.\n\nThe content should read like it was written by a human; naturally, casually, and with a realistic thought process. It should beat every AI detection model on content generation. \n\nHere are the key goals: \n\nVary sentence structure. Use a mix of long and short sentences. Interrupt smooth flows occasionally, just enough to feel real, not robotic. Add subtle imperfections. \n\nSlight redundancy, hesitations (like \"perhaps\" or \"I think\"), or overly cautious qualifiers make it feel more human. Avoid perfect symmetry. Don’t balance every argument too neatly. Let some thoughts feel unfinished or tangential, like a real person thinking out loud. \n\nUse light personalization. Mention reactions, small experiences, or opinions, even invented ones, that a typical person might include. Introduce ambiguity or mild contradiction. Humans aren’t always consistent, a slight shift in tone or perspective adds realism. \n\nSkip slang or regionalisms. Keep the language neutral, but still natural. Focus on tone, pacing, and realism. Avoid using \"*\" character while generating Linkedin post.\n\nFormat naturally. Avoid overly rigid or textbook-like structure.\n\nHere is the content pillar to generate post from: {{ $json['Topic to generate LinkedIn rticle'] }}\n\nFinal output rules:\nGenerate only the final LinkedIn post in a ready-to-publish format. Do not include explanations, introductions, conclusions, citations, links, markdown, headings, symbols, brackets, asterisks, em dashes, or any text before or after the post. Output only the post itself. In the final LinkedIn post, make sure not to include the “—” character at any place.\n\nEnd the post with optional, relevant hashtags formatted cleanly and spaced properly. ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        304,
+        64
+      ],
+      "id": "1833b4da-5296-4fc1-98d6-e001e6829983",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        752,
+        288
+      ],
+      "id": "208d233c-85ec-442f-bcac-04e9bf0e4275",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "5yAJxKCVsYzj3l8g",
+          "name": "LinkedIn account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
